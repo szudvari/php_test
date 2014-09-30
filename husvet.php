@@ -6,7 +6,6 @@
     </head>
     <body>
         <?php
-        setlocale(LC_ALL,'hungarian');
         @$get_year = $_GET['ev'];
         if (isset($get_year)) {
             $year = $get_year;
@@ -16,6 +15,7 @@
         if ($year < 1901 || $year > 2099) {
             die("<b>Hibás évszám ($year).</b><br><br>A program csak 1901 és 2099 között tudja kiszámítani húsvét és pünkösd dátumát.");
         }
+        $months = array(3=>"március", 4=>"április", 5=>"május", 6=>"június");
         $a = $year % 19;
         $b = $year % 4;
         $c = $year % 7;
@@ -29,19 +29,33 @@
             $h = 22 + $d + $e;
         }
         if ($h < 32) {
-            $month = 3;
-            $easter = $h;
+            $month = 03;
+            $easter_month = $months[3];
+            $easter_day = $h;
         } else {
-            $month = 4;
-            $easter = $h - 31;
+            $month = 04;
+            $easter_month = $months[4];
+            $easter_day = $h - 31;
         }
-        $easter_day = mktime(0, 0, 0, $month, $easter, $year);
-        $easter_sun = strftime("%B %d.", $easter_day);
-        $pentecost = strftime("%B %d.", strtotime("+49 days", $easter_day));
+        $dateSrc = $year."-".$month."-".$easter_day." 00:00"; 
+        $pentcost_date = new DateTime($dateSrc);
+        date_add($pentcost_date,date_interval_create_from_date_string("49 days"));
+        switch (date_format($pentcost_date,"m")) {
+            case '04': 
+                $pencost_month = $months[4];
+                break;
+            case '05':
+                $pencost_month = $months[5];
+                break;
+           case '06':
+                $pencost_month = $months[6];
+                break;
+        }
+        $pencost_day=date_format($pentcost_date,'j');
         echo "<b>$year. évben</b><br>";
         echo "<ul>";
-        echo "<li><span style='width:180px; display:inline-block;'>Húsvét vasárnap dátuma: </span><b>". iconv("ISO-8859-2", "UTF-8", $easter_sun)."</b></li>";
-        echo "<li><span style='width:180px; display:inline-block;'>Pünkösd vasárnap dátuma: </span><b>". iconv("ISO-8859-2", "UTF-8", $pentecost)."</b></li>";
+        echo "<li><span style='width:180px; display:inline-block;'>Húsvét vasárnap dátuma: </span><b>$easter_month $easter_day.</b></li>";
+        echo "<li><span style='width:180px; display:inline-block;'>Pünkösd vasárnap dátuma: </span><b>$pencost_month $pencost_day.</b></li>";
         echo "</ul>";
         ?>
     </body>
