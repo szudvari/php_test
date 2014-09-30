@@ -13,6 +13,9 @@
         } else {
             $year = date("Y");
         }
+        if ($year < 1901 || $year > 2099) {
+            die("<b>Hibás évszám ($year).</b><br><br>A program csak 1901 és 2099 között tudja kiszámítani húsvét és pünkösd dátumát.");
+        }
         $a = $year % 19;
         $b = $year % 4;
         $c = $year % 7;
