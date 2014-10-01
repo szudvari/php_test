@@ -44,7 +44,7 @@
             $easter_month = $months[4];
             $easter_day = $h - 31;
         }
-        //dátum lefordítása 
+        //dátum lefordítása, hogy számolni lehessen vele
         $dateSrc = $year."-".$month."-".$easter_day." 00:00"; 
         $pentcost_date = new DateTime($dateSrc);
         //pünkösd kiszámítása
